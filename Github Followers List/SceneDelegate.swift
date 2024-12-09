@@ -16,16 +16,49 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        
+                
         guard let mainApp = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: mainApp)
-//        let navigationController = UINavigationController(rootViewController: ViewController())
-        window.rootViewController = ViewController()
+        window.rootViewController = createTabBarController()
         self.window = window
         window.makeKeyAndVisible()
- 
     }
+    
+    func configureSearchVC() -> UINavigationController {
+        let searchVC = SearchViewController()
+        searchVC.title = "Search"
+        searchVC.view.backgroundColor = .systemBackground
+        searchVC.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
+        let navigationController = UINavigationController(rootViewController: searchVC)
+        return navigationController
+    }
+    
+    func configureFavoritesVC() -> UINavigationController {
+        let favoritesVC = FavoritesViewController()
+        favoritesVC.title = "Favorites"
+        favoritesVC.view.backgroundColor = .systemBackground
+        favoritesVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
+        let navigationController = UINavigationController(rootViewController: favoritesVC)
+        return navigationController
+    }
+    
+    func createTabBarController() -> UITabBarController {
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = [configureSearchVC(), configureFavoritesVC()]
+        UITabBar.appearance().tintColor = .systemOrange
+         //1. Tab Bar Appearance
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithDefaultBackground() // Moderni zamagljeni izgled
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance // Za scroll izvan granica
 
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.configureWithDefaultBackground() // Moderni zamagljeni izgled
+        UINavigationBar.appearance().standardAppearance = navBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+        return tabBarController
+    }
+    
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
