@@ -17,11 +17,12 @@ class SearchViewController: UIViewController {
         configureLogoImageView()
         configureTextField()
         configureSearchButton()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = true
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     func configureLogoImageView(){
@@ -61,6 +62,13 @@ class SearchViewController: UIViewController {
             searchButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -72),
             searchButton.heightAnchor.constraint(equalToConstant: 48)
             ])
+        searchButton.addTarget(self, action: #selector(pushToSearchResults), for: .touchUpInside)
+    }
+    
+    @objc func pushToSearchResults(){
+        let followersVC = FollowersListViewController()
+        followersVC.title = textField.text
+        navigationController?.pushViewController(followersVC, animated: true)
     }
     
     //TODO: 1:49:00

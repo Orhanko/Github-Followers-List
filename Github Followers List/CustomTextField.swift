@@ -38,16 +38,23 @@ class CustomTextField: UITextField {
     
     func dismissKeyboard() {
         let toolbar = UIToolbar()
+        toolbar.translatesAutoresizingMaskIntoConstraints = false
         toolbar.sizeToFit()
         let doneButton = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(closeKeyboard))
         doneButton.tintColor = .systemOrange
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         toolbar.items = [flexSpace, doneButton]
         self.inputAccessoryView = toolbar
+        
+        for constraint in toolbar.constraints {
+            print(constraint)
+        }
     }
     
     @objc func closeKeyboard() {
         self.resignFirstResponder()
     }
+    
+    
     
 }

@@ -22,6 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = createTabBarController()
         self.window = window
         window.makeKeyAndVisible()
+        navBarAppearance()
     }
     
     func configureSearchVC() -> UINavigationController {
@@ -39,6 +40,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         favoritesVC.view.backgroundColor = .systemBackground
         favoritesVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
         let navigationController = UINavigationController(rootViewController: favoritesVC)
+        navigationController.navigationBar.prefersLargeTitles = true
         return navigationController
     }
     
@@ -46,17 +48,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = UITabBarController()
         tabBarController.viewControllers = [configureSearchVC(), configureFavoritesVC()]
         UITabBar.appearance().tintColor = .systemOrange
-         //1. Tab Bar Appearance
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithDefaultBackground() // Moderni zamagljeni izgled
         UITabBar.appearance().standardAppearance = tabBarAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance // Za scroll izvan granica
-
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.configureWithDefaultBackground() // Moderni zamagljeni izgled
-        UINavigationBar.appearance().standardAppearance = navBarAppearance
-        UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
         return tabBarController
+    }
+    
+    func navBarAppearance() {
+        UINavigationBar.appearance().tintColor = .systemOrange
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
