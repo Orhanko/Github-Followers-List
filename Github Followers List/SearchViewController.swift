@@ -12,6 +12,7 @@ class SearchViewController: UIViewController {
     private let logoImageView = UIImageView()
     private let textField = CustomTextField()
     private let searchButton = CustomButton(title: "Search for username", backgroundColor: .systemOrange, buttonImage: "magnifyingglass.circle.fill")
+    var textFieldIsNotEmpty: Bool{ return !textField.text!.isEmpty}
     override func viewDidLoad() {
         super.viewDidLoad()
         configureLogoImageView()
@@ -66,12 +67,21 @@ class SearchViewController: UIViewController {
     }
     
     @objc func pushToSearchResults(){
+        guard textFieldIsNotEmpty else { showAlert(title: "Warning!", message: "Text Field is empty!") ; return }
         let followersVC = FollowersListViewController()
         followersVC.title = textField.text
         navigationController?.pushViewController(followersVC, animated: true)
     }
     
-    //TODO: 1:49:00
+    func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let dismissAction = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
+        alert.view.tintColor = .systemOrange
+        alert.addAction(dismissAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    //TODO: 2:59:46
 }
 
 extension SearchViewController: UITextFieldDelegate{
