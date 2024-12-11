@@ -20,15 +20,18 @@ class FollowersListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
-        networkManager.getFollowers(for: username) { followers, errorMessage in
-            print(self.username)
-            if let errorMessage {
-                print(errorMessage)
-                return
-            }
-            for follower in followers! {
+        
+        networkManager.getFollowers(for: username) { result in
+            switch result{
+            case .success(let followers):
+                for follower in followers {
                     print("Login: \(follower.login), Avatar URL: \(follower.avatarUrl)")
+                    print("----------------------------------")
                 }
+            case .failure(let error):
+                print("Error: \(error)")
+            }
+            
         }
     }
 }

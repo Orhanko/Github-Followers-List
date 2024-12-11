@@ -7,15 +7,21 @@
 
 import Foundation
 
+enum CustomError: String, Error{
+    case invalidURL = "Invalid URL"
+    case errorData = "Check your internet connection"
+    case invalidResponse = "Invalid response"
+    case dataMissing = "No data"
+}
+
 class NetworkManager {
     let baseURL = "https://api.github.com/users/"
     
-    func getFollowers(for username: String, completion: @escaping ([Followers]?, String?) -> Void ){
+    func getFollowers(for username: String, completion: @escaping (Result<[Followers], CustomError>) -> Void ){
         let endpoint = baseURL + username + "/followers"
-        print("Orhan Pojskic: \(endpoint)")
         
         guard let url = URL(string: endpoint) else {
-            completion(nil, "Invalid URL")
+            completion(.failure(.invalidURL))
             return
         }
         
@@ -23,19 +29,19 @@ class NetworkManager {
             
             if let error = error {
                 print("Network error: \(error.localizedDescription)")
-                completion(nil, "Ti mi vracas gresku: \(error.localizedDescription)")
+                completion(.failure(.errorData))
                 return
             }
             
             if let response = response as? HTTPURLResponse {
                 if response.statusCode != 200 {
-                    completion(nil, "Something went wrong")
+                    completion(.failure(.invalidResponse))
                     return
                 }
             }
             
             guard let data else {
-                completion(nil, "No data")
+                completion(.failure(.dataMissing))
                 return
             }
             
@@ -43,9 +49,9 @@ class NetworkManager {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 let followers = try decoder.decode([Followers].self, from: data)
-                completion(followers, nil)
+                completion(.success(followers))
             } catch {
-                completion(nil, error.localizedDescription)
+                completion(.failure(.dataMissing))
             }
         }
         task.resume()
