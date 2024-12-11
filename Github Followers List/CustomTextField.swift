@@ -45,16 +45,9 @@ class CustomTextField: UITextField {
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         toolbar.items = [flexSpace, doneButton]
         self.inputAccessoryView = toolbar
-        
-        for constraint in toolbar.constraints {
-            print(constraint)
-        }
     }
     
     @objc func closeKeyboard() {
         self.resignFirstResponder()
     }
-    
-    
-    
 }

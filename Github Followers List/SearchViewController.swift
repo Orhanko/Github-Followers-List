@@ -6,19 +6,18 @@
 //
 
 import UIKit
-
+//TODO: 5:44:30
 class SearchViewController: UIViewController {
 
     private let logoImageView = UIImageView()
     private let textField = CustomTextField()
     private let searchButton = CustomButton(title: "Search for username", backgroundColor: .systemOrange, buttonImage: "magnifyingglass.circle.fill")
-    var textFieldIsNotEmpty: Bool{ return !textField.text!.isEmpty}
+    var textFieldIsNotEmpty: Bool{ return !textField.text!.isEmpty }
     override func viewDidLoad() {
         super.viewDidLoad()
         configureLogoImageView()
         configureTextField()
         configureSearchButton()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -81,8 +80,6 @@ class SearchViewController: UIViewController {
         alert.addAction(dismissAction)
         present(alert, animated: true, completion: nil)
     }
-    
-    //TODO: 2:59:46
 }
 
 extension SearchViewController: UITextFieldDelegate{

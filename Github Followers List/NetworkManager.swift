@@ -5,19 +5,15 @@
 //  Created by Orhan Pojskic on 12/11/24.
 //
 
-import Foundation
-
-enum CustomError: String, Error{
-    case invalidURL = "Invalid URL"
-    case errorData = "Check your internet connection"
-    case invalidResponse = "Invalid response"
-    case dataMissing = "No data"
-}
+import UIKit
 
 class NetworkManager {
-    let baseURL = "https://api.github.com/users/"
+    static let shared = NetworkManager()
+    let cache = NSCache<NSString, UIImage>()
     
-    func getFollowers(for username: String, completion: @escaping (Result<[Followers], CustomError>) -> Void ){
+    private let baseURL = "https://api.github.com/users/"
+    
+    func getFollowers(for username: String, completion: @escaping (Result<[Followers], CustomErrorForGetFollowers>) -> Void ){
         let endpoint = baseURL + username + "/followers"
         
         guard let url = URL(string: endpoint) else {
