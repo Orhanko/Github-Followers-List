@@ -70,6 +70,7 @@ class SearchViewController: UIViewController {
         guard textFieldIsNotEmpty else { showAlert(title: "Warning!", message: "Text Field is empty!") ; return }
         let followersVC = FollowersListViewController()
         followersVC.title = textField.text
+        followersVC.username = textField.text!
         navigationController?.pushViewController(followersVC, animated: true)
     }
     
