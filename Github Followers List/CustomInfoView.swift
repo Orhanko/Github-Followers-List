@@ -73,7 +73,7 @@ class CustomInfoView: UIView {
                 image.widthAnchor.constraint(equalToConstant: imageSize),
                 image.heightAnchor.constraint(equalToConstant: imageSize),
                 image.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: 25),
-                image.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 70)
+                image.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 65)
             ])
         } else if imageName == "person.2.slash.fill" {
             NSLayoutConstraint.activate([

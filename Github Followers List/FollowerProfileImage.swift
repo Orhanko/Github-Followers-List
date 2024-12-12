@@ -24,6 +24,7 @@ class FollowerProfileImage: UIImageView {
         clipsToBounds = true
         image = UIImage(systemName: "person.circle.fill")
         tintColor = .systemOrange
+        backgroundColor = UIColor.systemGray5
         translatesAutoresizingMaskIntoConstraints = false
     }
     
