@@ -15,7 +15,9 @@ class FollowersListViewController: UIViewController {
 //    let networkManager = NetworkManager()
     var followers: [Followers] = []
     var username: String = ""
+    var page = 1
     var collectionView: UICollectionView!
+    var hasMoreFollowers = true
     var dataSource: UICollectionViewDiffableDataSource<Section, Followers>!
     
     override func viewWillAppear(_ animated: Bool) {
@@ -26,7 +28,7 @@ class FollowersListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureCollectionView()
-        getFollowers()
+        getFollowers(username: username, page: page)
         configureVC()
         configureDataSource()
     }
@@ -39,7 +41,7 @@ class FollowersListViewController: UIViewController {
     func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createThreeColumnFlowLayout())
         view.addSubview(collectionView)
-        
+        collectionView.delegate = self
         collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseIdentifier )
         collectionView.alwaysBounceVertical = true
         collectionView.contentInsetAdjustmentBehavior = .automatic
@@ -59,11 +61,12 @@ class FollowersListViewController: UIViewController {
         return flowLayout
     }
     
-    func getFollowers() {
-        NetworkManager.shared.getFollowers(for: username) { [weak self] result in
+    func getFollowers(username: String, page: Int) {
+        NetworkManager.shared.getFollowers(for: username, page: page) { [weak self] result in
             switch result{
             case .success(let followers):
-                self?.followers = followers
+                if followers.count < 15 {self?.hasMoreFollowers = false}
+                self?.followers.append(contentsOf: followers)
                 self?.updateData()
             case .failure(let error):
                 print("Error: \(error)")
@@ -86,6 +89,22 @@ class FollowersListViewController: UIViewController {
         snapshot.appendSections([.main])
         snapshot.appendItems(followers)
         DispatchQueue.main.async { self.dataSource?.apply(snapshot, animatingDifferences: true) }
+        
+    }
+}
+
+extension FollowersListViewController: UICollectionViewDelegate{
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let offsety = scrollView.contentOffset.y
+        let height = scrollView.frame.height // height ekrana u tom trenutku
+        let contentHeight = scrollView.contentSize.height // citav scrollView sa sadrzajem
+        if offsety > contentHeight - height{
+            guard hasMoreFollowers else { return }
+            
+            page += 1
+            getFollowers(username: username, page: page)
+            
+        }
         
     }
 }

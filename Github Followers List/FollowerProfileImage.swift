@@ -32,11 +32,14 @@ class FollowerProfileImage: UIImageView {
         
         // Proveri da li slika već postoji u kešu
         if let image = cache.object(forKey: cacheKey as NSString) {
+            print("Slika vec u keshu")
             DispatchQueue.main.async {
                 self.image = image
             }
             return
         }
+        
+        print("Slika nije u keshu")
         
         guard let url = URL(string: url) else { return }
         
@@ -44,7 +47,7 @@ class FollowerProfileImage: UIImageView {
             // Sigurnosna provera za self
             guard let self = self else { return }
             
-            if let error = error { return }
+            if error != nil { return }
             
             guard let response = response as? HTTPURLResponse, response.statusCode == 200 else { return }
             
