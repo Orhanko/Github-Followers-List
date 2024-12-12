@@ -30,10 +30,16 @@ class NetworkManager {
             }
             
             if let response = response as? HTTPURLResponse {
-                if response.statusCode != 200 {
-                    completion(.failure(.invalidResponse))
-                    return
-                }
+                switch response.statusCode {
+                    case 200:
+                        break // Sve je u redu
+                    case 404:
+                        completion(.failure(.userNotFound)) // Detektovan `404`
+                        return
+                    default:
+                        completion(.failure(.invalidResponse))
+                        return
+                    }
             }
             
             guard let data else {

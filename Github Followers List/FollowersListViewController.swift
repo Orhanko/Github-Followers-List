@@ -68,11 +68,20 @@ class FollowersListViewController: UIViewController {
             self?.dismissLoadingView()
             switch result{
             case .success(let followers):
+                print(followers)
                 if followers.count < 15 {self?.hasMoreFollowers = false}
                 self?.followers.append(contentsOf: followers)
+                
+                if self?.followers.isEmpty == true {
+                    
+                    DispatchQueue.main.async { self?.showEmptyFollowerListView() }
+                    return
+                }
                 self?.updateData()
             case .failure(let error):
-                print("Error: \(error)")
+                DispatchQueue.main.async {
+                                self?.handleUserNotFoundError(error)
+                            }
             }
             
         }
@@ -116,6 +125,23 @@ class FollowersListViewController: UIViewController {
             self.loaderView.removeFromSuperview()
             self.loaderView = nil
         }
+    }
+    
+    func showEmptyFollowerListView(){
+        let emptyView = CustomInfoView(imageName: "person.2.slash.fill", message: "Entered user does not have followers yet. ", emoji: "👀")
+        emptyView.frame = view.bounds
+        view.addSubview(emptyView)
+    }
+    
+    func handleUserNotFoundError(_ error: CustomErrorForGetFollowers){
+        switch error {
+            case .userNotFound:
+            let notFoundView = CustomInfoView(imageName: "person.fill.xmark", message: "User not found, Please try again.", emoji: "😔")
+            notFoundView.frame = view.bounds
+            view.addSubview(notFoundView)
+            default: return
+        }
+        
     }
 }
 
