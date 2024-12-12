@@ -18,6 +18,7 @@ class FollowersListViewController: UIViewController {
     var page = 1
     var collectionView: UICollectionView!
     var hasMoreFollowers = true
+    var loaderView: UIView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Followers>!
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,7 +63,9 @@ class FollowersListViewController: UIViewController {
     }
     
     func getFollowers(username: String, page: Int) {
+        showLoadinView()
         NetworkManager.shared.getFollowers(for: username, page: page) { [weak self] result in
+            self?.dismissLoadingView()
             switch result{
             case .success(let followers):
                 if followers.count < 15 {self?.hasMoreFollowers = false}
@@ -90,6 +93,29 @@ class FollowersListViewController: UIViewController {
         snapshot.appendItems(followers)
         DispatchQueue.main.async { self.dataSource?.apply(snapshot, animatingDifferences: true) }
         
+    }
+    
+    func showLoadinView(){
+        loaderView = UIView(frame: view.bounds)
+        view.addSubview(loaderView)
+        loaderView.backgroundColor = .systemBackground
+        loaderView.alpha = 0
+        UIView.animate(withDuration: 0.25){ self.loaderView.alpha = 0.8 }
+        let activityIndicatorView = UIActivityIndicatorView(style: .large)
+        loaderView.addSubview(activityIndicatorView)
+        activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            activityIndicatorView.centerYAnchor.constraint(equalTo: loaderView.centerYAnchor),
+            activityIndicatorView.centerXAnchor.constraint(equalTo: loaderView.centerXAnchor)
+        ])
+        activityIndicatorView.startAnimating()
+    }
+    
+    func dismissLoadingView(){
+        DispatchQueue.main.async {
+            self.loaderView.removeFromSuperview()
+            self.loaderView = nil
+        }
     }
 }
 
