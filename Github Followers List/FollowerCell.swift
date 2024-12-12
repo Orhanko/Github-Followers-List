@@ -30,7 +30,7 @@ class FollowerCell: UICollectionViewCell {
     }
     
     func configure() {
-//        backgroundColor = .systemBlue
+        usernameLabel.textAlignment = .center
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(avatarImageView)
@@ -44,8 +44,8 @@ class FollowerCell: UICollectionViewCell {
             avatarImageView.heightAnchor.constraint(equalTo: avatarImageView.widthAnchor),
             
             usernameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 12),
-            usernameLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding*2),
-            usernameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding*2),
+            usernameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            usernameLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             usernameLabel.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
