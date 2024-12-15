@@ -37,14 +37,23 @@ class UserInfoHeaderView: UIView {
     }
     
     func configureData() {
-        imageView.image = UIImage(systemName: "person.circle")
-        username.text = "Username proba"
-        firstNameLastName.text =  "FirstName LastName"
+        /*TODO: IZMIJENITI:*/ imageView.downloadImage(from: user!.avatarUrl)
+        username.text = user?.login //?? "Orhanko" //TODO: OVO OBAVEZNO IZBRISATI
+        firstNameLastName.text =  user?.name ??  "Full name ❌" //TODO: OVO OBAVEZNO PROMIJENITI NA: "Full name not available"
+        //firstNameLastName.backgroundColor = .systemBlue
         locationImageView.image = UIImage(systemName: "mappin.and.ellipse")
-        locationLabel.text = "Location"
-        bio.text = "Ovo je tekst koji ce sluziti za deskripciju korisnika, koju je sam napravio na github profilu. Pisem ovaj tekst iz razloga da testiram kako ce ponasati u slucaju ako je potrebno dva ili redova i da li ce se automatski izracunavati visina ovog container view-a."
+        locationLabel.text = user?.location ?? "Location ❌"
+        locationImageView.tintColor = locationLabel.text == user?.location ? .systemBlue : .secondaryLabel
+        bio.text = user?.bio ?? "Biography not available"
+        locationLabel.lineBreakMode = .byWordWrapping
+        locationLabel.numberOfLines = 0
         bio.lineBreakMode = .byWordWrapping
         bio.numberOfLines = 0
+        bio.textColor = .secondaryLabel
+        username.font = .preferredFont(forTextStyle: .extraLargeTitle)
+        firstNameLastName.font = .boldSystemFont(ofSize: 22)
+        firstNameLastName.textColor = .secondaryLabel
+        locationLabel.textColor = .secondaryLabel
     }
     
     func addSubviews() {
@@ -61,7 +70,8 @@ class UserInfoHeaderView: UIView {
         
         let textFromImagePadding: CGFloat = 10
         
-        
+        //locationLabel.backgroundColor = .systemOrange
+        //locationImageView.backgroundColor = .systemRed
         
         //imageView.translatesAutoresizingMaskIntoConstraints = false
         username.translatesAutoresizingMaskIntoConstraints = false
@@ -75,28 +85,28 @@ class UserInfoHeaderView: UIView {
             imageView.heightAnchor.constraint(equalToConstant: 120),
             imageView.widthAnchor.constraint(equalToConstant: 120),
             
-            username.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 5),
+            username.topAnchor.constraint(equalTo: imageView.topAnchor),
             username.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: textFromImagePadding),
             username.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
 //            username.heightAnchor.constraint(equalToConstant: 20),
             
-            firstNameLastName.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            firstNameLastName.centerYAnchor.constraint(equalTo: imageView.centerYAnchor, constant: 5),
             firstNameLastName.leadingAnchor.constraint(equalTo: username.leadingAnchor),
             firstNameLastName.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
-            firstNameLastName.heightAnchor.constraint(equalToConstant: 20),
+            //firstNameLastName.heightAnchor.constraint(equalToConstant: 20),
             
             locationImageView.leadingAnchor.constraint(equalTo: firstNameLastName.leadingAnchor),
-            locationImageView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -5),
-            locationImageView.heightAnchor.constraint(equalToConstant: 25),
-            locationImageView.widthAnchor.constraint(equalToConstant: 25),
+            locationImageView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
+            locationImageView.heightAnchor.constraint(equalToConstant: 30),
+            locationImageView.widthAnchor.constraint(equalToConstant: 30),
             
-            locationLabel.bottomAnchor.constraint(equalTo: locationImageView.bottomAnchor),
+            locationLabel.centerYAnchor.constraint(equalTo: locationImageView.centerYAnchor),
             locationLabel.leadingAnchor.constraint(equalTo: locationImageView.trailingAnchor, constant: 5),
             locationLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
 //            locationLabel.heightAnchor.constraint(equalToConstant: 20),
             
             bio.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
-            bio.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: textFromImagePadding),
+            bio.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: padding),
             bio.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
             bio.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -padding)
         ])

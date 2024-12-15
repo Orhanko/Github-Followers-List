@@ -9,7 +9,8 @@ import UIKit
 
 class UserInfoViewController: UIViewController {
     var username: String!
-    let headerView = UserInfoHeaderView()
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -25,20 +26,21 @@ class UserInfoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        layoutUI()
         view.backgroundColor = .systemBackground
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
         navigationItem.rightBarButtonItem = doneButton
         title = username
-        NetworkManager.shared.getUserInfo(for: username) { result in
+        NetworkManager.shared.getUserInfo(for: username) { [weak self] result in
             switch result {
             case .success(let user):
-                print("\(user.login), \(user.avatarUrl), \(user.name ?? "Name default"), \(user.location ?? "lokacijadefault"), \(user.bio ?? "bio default"), \(user.publicRepos), \(user.publicGists), \(user.htmlUrl), \(user.followers), \(user.following), \(user.createdAt)")
+                DispatchQueue.main.async {
+                    let headerView = UserInfoHeaderView(user: user)
+                    self?.layoutUI(for: headerView)
+                }
             case .failure(let error):
                 return print(error)
             }
         }
-        
     }
     
     @objc func dismissVC() {
@@ -46,7 +48,7 @@ class UserInfoViewController: UIViewController {
     }
     
     
-    func layoutUI() {
+    func layoutUI(for headerView: UIView) {
         headerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(headerView)
         NSLayoutConstraint.activate([
