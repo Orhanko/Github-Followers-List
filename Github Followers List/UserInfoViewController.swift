@@ -9,23 +9,24 @@ import UIKit
 
 class UserInfoViewController: UIViewController {
     var username: String!
+    let headerView = UserInfoHeaderView()
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        // Kreirajte izgled navigation bar-a sa default pozadinom
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-
-        // Primijenite izgled na navigation bar samo za ovaj ViewController
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.compactAppearance = appearance
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//
+//        // Kreirajte izgled navigation bar-a sa default pozadinom
+//        let appearance = UINavigationBarAppearance()
+//        appearance.configureWithDefaultBackground()
+//
+//        // Primijenite izgled na navigation bar samo za ovaj ViewController
+//        navigationController?.navigationBar.standardAppearance = appearance
+//        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+//        navigationController?.navigationBar.compactAppearance = appearance
+//    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = .systemBackground
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
         navigationItem.rightBarButtonItem = doneButton
@@ -34,8 +35,8 @@ class UserInfoViewController: UIViewController {
             switch result {
             case .success(let user):
                 DispatchQueue.main.async {
-                    let headerView = UserInfoHeaderView(user: user)
-                    self?.layoutUI(for: headerView)
+                    self?.layoutUI(for: self!.headerView)
+                    self?.headerView.configureHeaderView(for: user)
                 }
             case .failure(let error):
                 return print(error)
@@ -53,8 +54,8 @@ class UserInfoViewController: UIViewController {
         view.addSubview(headerView)
         NSLayoutConstraint.activate([
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            headerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
     }
 }
