@@ -33,4 +33,12 @@ class CustomButton: UIButton {
         config.imagePadding = 8
         configuration = config
     }
+    
+    func configureItemInfoButton(title: String, backgroundColor: UIColor){
+        translatesAutoresizingMaskIntoConstraints = false
+        var config = UIButton.Configuration.filled()
+        config.baseBackgroundColor = backgroundColor
+        config.title = title
+        configuration = config
+    }
 }

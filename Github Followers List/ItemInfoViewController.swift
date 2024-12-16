@@ -10,7 +10,7 @@ import UIKit
 class ItemInfoViewController: UIView {
 
     
-    let button = UIButton()
+    let button = CustomButton()
     let itemInfoViewOne = ItemInfoView()
     let itemInfoViewTwo = ItemInfoView()
     let stackView = UIStackView()

@@ -20,7 +20,6 @@ class RepoItemView: ItemInfoViewController {
     func configureItems(with user: User) {
         itemInfoViewOne.set(itemInfoType: .repos, with: user.publicRepos)
         itemInfoViewTwo.set(itemInfoType: .gists, with: user.publicGists)
-        button.backgroundColor = .systemPurple
-        button.setTitle("Github Profile", for: .normal)
+        button.configureItemInfoButton(title: "Github Profile", backgroundColor: .systemPurple)
     }
 }
