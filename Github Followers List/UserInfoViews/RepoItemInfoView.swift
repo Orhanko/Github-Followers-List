@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RepoItemView: ItemInfoViewController {
+class RepoItemInfoView: ItemInfoView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)

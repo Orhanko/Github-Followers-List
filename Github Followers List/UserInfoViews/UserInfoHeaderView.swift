@@ -91,7 +91,7 @@ class UserInfoHeaderView: UIView {
             bio.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             bio.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: padding),
             bio.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
-            bio.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -padding)
+            bio.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     

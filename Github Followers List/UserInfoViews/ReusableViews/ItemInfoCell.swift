@@ -1,5 +1,5 @@
 //
-//  ItemInfoView.swift
+//  ItemInfoCell.swift
 //  Github Followers List
 //
 //  Created by Orhan Pojskic on 12/16/24.
@@ -14,7 +14,7 @@ enum ItemInfoViewType {
     case gists
 }
 
-class ItemInfoView: UIView {
+class ItemInfoCell: UIView {
     
     let symbolImageVIew = UIImageView()
     let title = UILabel()
@@ -47,11 +47,11 @@ class ItemInfoView: UIView {
             symbolImageVIew.heightAnchor.constraint(equalToConstant: 20),
             
             title.centerYAnchor.constraint(equalTo: symbolImageVIew.centerYAnchor),
-            title.leadingAnchor.constraint(equalTo: symbolImageVIew.trailingAnchor, constant: 12),
+            title.leadingAnchor.constraint(equalTo: symbolImageVIew.trailingAnchor, constant: 8),
             title.trailingAnchor.constraint(equalTo: trailingAnchor),
             
             countLabel.topAnchor.constraint(equalTo: symbolImageVIew.bottomAnchor, constant: 4),
-            countLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            countLabel.leadingAnchor.constraint(equalTo: title.leadingAnchor),
             countLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             countLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])

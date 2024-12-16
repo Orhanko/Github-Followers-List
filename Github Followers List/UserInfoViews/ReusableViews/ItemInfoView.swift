@@ -7,12 +7,12 @@
 
 import UIKit
 
-class ItemInfoViewController: UIView {
+class ItemInfoView: UIView {
 
     
     let button = CustomButton()
-    let itemInfoViewOne = ItemInfoView()
-    let itemInfoViewTwo = ItemInfoView()
+    let itemInfoViewOne = ItemInfoCell()
+    let itemInfoViewTwo = ItemInfoCell()
     let stackView = UIStackView()
 
     override init(frame: CGRect) {
@@ -36,6 +36,8 @@ class ItemInfoViewController: UIView {
         stackView.axis = .horizontal
         stackView.distribution = .equalSpacing
         stackView.addArrangedSubview(itemInfoViewOne)
+//        itemInfoViewOne.backgroundColor = .systemMint
+//        itemInfoViewTwo.backgroundColor = .systemRed
         stackView.addArrangedSubview(itemInfoViewTwo)
     }
     
@@ -47,13 +49,14 @@ class ItemInfoViewController: UIView {
         addSubview(button)
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: topAnchor, constant: padding),
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding*1.5),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding*1.5),
             
             button.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: padding),
             button.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             button.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
-            button.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -padding)
+            button.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -padding),
+            button.heightAnchor.constraint(equalToConstant: 48)
         ])
     }
     

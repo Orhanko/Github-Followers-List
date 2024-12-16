@@ -7,7 +7,7 @@
 
 import UIKit
 
-class FollowerItemView: ItemInfoViewController {
+class FollowerItemInfoView: ItemInfoView {
     
     func configureItems(with user: User) {
         itemInfoViewOne.set(itemInfoType: .followers, with: user.followers)

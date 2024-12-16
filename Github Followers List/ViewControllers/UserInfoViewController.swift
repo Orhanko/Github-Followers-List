@@ -10,13 +10,13 @@ import UIKit
 class UserInfoViewController: UIViewController {
     var username: String!
     let headerView = UserInfoHeaderView()
-    let itemInfoOne = RepoItemView()
-    let itemInfoTwo = FollowerItemView()
-    let proba = FollowerItemView()
+    let itemInfoOne = RepoItemInfoView()
+    let itemInfoTwo = FollowerItemInfoView()
+    let proba = FollowerItemInfoView()
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.prefersLargeTitles = false
         view.backgroundColor = .systemBackground
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
         navigationItem.rightBarButtonItem = doneButton
@@ -25,7 +25,7 @@ class UserInfoViewController: UIViewController {
             switch result {
             case .success(let user):
                 DispatchQueue.main.async {
-                    self?.layoutUI(for: self!.headerView)
+                    self?.layoutUI()
                     self?.headerView.configureHeaderView(for: user)
                     self?.itemInfoOne.configureItems(with: user)
                     self?.itemInfoTwo.configureItems(with: user)
@@ -41,7 +41,7 @@ class UserInfoViewController: UIViewController {
     }
     
     
-    func layoutUI(for headerView: UIView) {
+    func layoutUI() {
         headerView.translatesAutoresizingMaskIntoConstraints = false
         itemInfoOne.translatesAutoresizingMaskIntoConstraints = false
         itemInfoTwo.translatesAutoresizingMaskIntoConstraints = false
