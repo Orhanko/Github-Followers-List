@@ -52,7 +52,8 @@ class ItemInfoView: UIView {
             
             countLabel.topAnchor.constraint(equalTo: symbolImageVIew.bottomAnchor, constant: 4),
             countLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            countLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
+            countLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            countLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
     

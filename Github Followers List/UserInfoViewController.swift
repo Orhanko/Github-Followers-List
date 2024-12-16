@@ -49,7 +49,6 @@ class UserInfoViewController: UIViewController {
         view.addSubview(headerView)
         view.addSubview(itemInfoOne)
         view.addSubview(itemInfoTwo)
-        view.addSubview(proba)
         NSLayoutConstraint.activate([
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
