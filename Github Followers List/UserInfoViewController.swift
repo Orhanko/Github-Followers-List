@@ -10,20 +10,10 @@ import UIKit
 class UserInfoViewController: UIViewController {
     var username: String!
     let headerView = UserInfoHeaderView()
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//
-//        // Kreirajte izgled navigation bar-a sa default pozadinom
-//        let appearance = UINavigationBarAppearance()
-//        appearance.configureWithDefaultBackground()
-//
-//        // Primijenite izgled na navigation bar samo za ovaj ViewController
-//        navigationController?.navigationBar.standardAppearance = appearance
-//        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-//        navigationController?.navigationBar.compactAppearance = appearance
-//    }
-    
+    let itemInfoOne = RepoItemView()
+    let itemInfoTwo = FollowerItemView()
+    let proba = FollowerItemView()
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -37,6 +27,8 @@ class UserInfoViewController: UIViewController {
                 DispatchQueue.main.async {
                     self?.layoutUI(for: self!.headerView)
                     self?.headerView.configureHeaderView(for: user)
+                    self?.itemInfoOne.configureItems(with: user)
+                    self?.itemInfoTwo.configureItems(with: user)
                 }
             case .failure(let error):
                 return print(error)
@@ -51,11 +43,26 @@ class UserInfoViewController: UIViewController {
     
     func layoutUI(for headerView: UIView) {
         headerView.translatesAutoresizingMaskIntoConstraints = false
+        itemInfoOne.translatesAutoresizingMaskIntoConstraints = false
+        itemInfoTwo.translatesAutoresizingMaskIntoConstraints = false
+        proba.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(headerView)
+        view.addSubview(itemInfoOne)
+        view.addSubview(itemInfoTwo)
+        view.addSubview(proba)
         NSLayoutConstraint.activate([
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            headerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+            headerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            
+            itemInfoOne.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 20),
+            itemInfoOne.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            itemInfoOne.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
+            itemInfoTwo.topAnchor.constraint(equalTo: itemInfoOne.bottomAnchor, constant: 20),
+            itemInfoTwo.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            itemInfoTwo.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
         ])
+        
     }
 }
