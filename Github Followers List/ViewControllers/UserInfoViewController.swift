@@ -13,10 +13,11 @@ class UserInfoViewController: UIViewController {
     let itemInfoOne = RepoItemInfoView()
     let itemInfoTwo = FollowerItemInfoView()
     let proba = FollowerItemInfoView()
+    let dateLabel = UILabel()
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = .systemBackground
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
         navigationItem.rightBarButtonItem = doneButton
@@ -29,6 +30,7 @@ class UserInfoViewController: UIViewController {
                     self?.headerView.configureHeaderView(for: user)
                     self?.itemInfoOne.configureItems(with: user)
                     self?.itemInfoTwo.configureItems(with: user)
+                    self?.dateLabel.text = "Github Profile created in \(self?.formatISODateString(user.createdAt) ?? "")"
                 }
             case .failure(let error):
                 return print(error)
@@ -45,10 +47,13 @@ class UserInfoViewController: UIViewController {
         headerView.translatesAutoresizingMaskIntoConstraints = false
         itemInfoOne.translatesAutoresizingMaskIntoConstraints = false
         itemInfoTwo.translatesAutoresizingMaskIntoConstraints = false
-        proba.translatesAutoresizingMaskIntoConstraints = false
+        dateLabel.translatesAutoresizingMaskIntoConstraints = false
+        dateLabel.textAlignment = .center
+        dateLabel.textColor = .secondaryLabel
         view.addSubview(headerView)
         view.addSubview(itemInfoOne)
         view.addSubview(itemInfoTwo)
+        view.addSubview(dateLabel)
         NSLayoutConstraint.activate([
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             headerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
@@ -61,7 +66,26 @@ class UserInfoViewController: UIViewController {
             itemInfoTwo.topAnchor.constraint(equalTo: itemInfoOne.bottomAnchor, constant: 20),
             itemInfoTwo.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             itemInfoTwo.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
+            dateLabel.topAnchor.constraint(equalTo: itemInfoTwo.bottomAnchor, constant: 20),
+            dateLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            dateLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
         ])
         
+    }
+    
+    func formatISODateString(_ dateString: String) -> String? {
+        let inputFormatter = ISO8601DateFormatter()
+        inputFormatter.formatOptions = [.withInternetDateTime, .withColonSeparatorInTime] // Osigurava kompatibilnost
+        
+        guard let date = inputFormatter.date(from: dateString) else {
+            return nil
+        }
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "MMMM yyyy"
+        outputFormatter.locale = Locale(identifier: "en_US")
+    
+        return outputFormatter.string(from: date)
     }
 }
