@@ -6,18 +6,24 @@
 //
 
 import UIKit
+enum customEmptyInfoViewType: String {
+    case followers = "Entered user does not have followers yet. "
+    case following = "Entered user does not follow anyone yet. "
+    case notFound = "User not found, Please try again."
+}
 
 class CustomInfoView: UIView {
+    
 
     private let image = UIImageView()
     private let label = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configure(imageName: "", message: "", emoji: "")
+        //configure(imageName: "", message: customEmptyInfoViewType, emoji: "")
     }
     
-    init(imageName: String, message: String, emoji: String) {
+    init(imageName: String, message: customEmptyInfoViewType, emoji: String) {
         super.init(frame: .zero)
         configure(imageName: imageName, message: message, emoji: emoji)
     }
@@ -26,7 +32,7 @@ class CustomInfoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func configure(imageName: String, message: String, emoji: String) {
+    private func configure(imageName: String, message: customEmptyInfoViewType, emoji: String) {
         let combinedLabel = UILabel()
         addSubview(combinedLabel)
         addSubview(image)
@@ -40,7 +46,7 @@ class CustomInfoView: UIView {
         image.tintColor = UIColor.systemOrange.withAlphaComponent(0.4)
 
         // Kreiranje atributisanog stringa za tekst i emoji
-        let attributedString = NSMutableAttributedString(string: message, attributes: [
+        let attributedString = NSMutableAttributedString(string: message.rawValue, attributes: [
             .font: UIFont.systemFont(ofSize: 30, weight: .bold),
             .foregroundColor: UIColor.secondaryLabel
         ])
@@ -85,4 +91,6 @@ class CustomInfoView: UIView {
             ])
         }
     }
+    
+    
 }

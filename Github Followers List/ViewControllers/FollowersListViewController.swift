@@ -77,7 +77,7 @@ class FollowersListViewController: UIViewController {
                 } else {
                     print("Ispisni test radi provjere da li uslov ulazi u ovaj blok")
                     DispatchQueue.main.async {
-                        self.showEmptyFollowerListView()
+                        self.showEmptyFollowerListView(with: .followers)
                     }
                 }
             } else {
@@ -94,7 +94,7 @@ class FollowersListViewController: UIViewController {
                 } else {
                     DispatchQueue.main.async {
                         self.navigationItem.searchController?.searchBar.isHidden = true
-                        self.showEmptyFollowerListView()
+                        self.showEmptyFollowerListView(with: .following)
                     }
                 }
             } else {
@@ -140,7 +140,7 @@ class FollowersListViewController: UIViewController {
                 if followers.count < 15 {self?.hasMoreFollowers = false}
                 self?.followers.append(contentsOf: followers)
                 if self?.followers.isEmpty == true {
-                    DispatchQueue.main.async { self?.showEmptyFollowerListView() }
+                    DispatchQueue.main.async { self?.showEmptyFollowerListView(with: .followers) }
                     return
                 }
                 self?.updateData(on: self!.followers)
@@ -170,7 +170,7 @@ class FollowersListViewController: UIViewController {
                 }
                 if following.isEmpty {
                     DispatchQueue.main.async {
-                        self?.showEmptyFollowerListView()
+                        self?.showEmptyFollowerListView(with: .following)
                     }
                 } else {
                     if following.count < 15 { self?.hasMoreFollowing = false }
@@ -240,8 +240,8 @@ class FollowersListViewController: UIViewController {
         
     }
     
-    func showEmptyFollowerListView(){
-        let emptyView = CustomInfoView(imageName: "person.2.slash.fill", message: "Entered user does not have followers yet. ", emoji: "👀")
+    func showEmptyFollowerListView(with message: customEmptyInfoViewType){
+        let emptyView = CustomInfoView(imageName: "person.2.slash.fill", message: message, emoji: "👀")
         emptyView.frame = view.bounds
         view.addSubview(emptyView)
         navigationItem.searchController?.searchBar.isHidden = true
@@ -251,7 +251,7 @@ class FollowersListViewController: UIViewController {
     func handleUserNotFoundError(_ error: CustomErrorForGetFollowers){
         switch error {
         case .userNotFound:
-            let notFoundView = CustomInfoView(imageName: "person.fill.xmark", message: "User not found, Please try again.", emoji: "😔")
+            let notFoundView = CustomInfoView(imageName: "person.fill.xmark", message: .notFound, emoji: "😔")
             notFoundView.frame = view.bounds
             view.addSubview(notFoundView)
         default: return
