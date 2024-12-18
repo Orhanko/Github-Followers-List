@@ -9,9 +9,13 @@ import UIKit
 
 class FollowerItemInfoView: ItemInfoView {
     
-    func configureItems(with user: User) {
+    func configureItems() {
         itemInfoViewOne.set(itemInfoType: .followers, with: user.followers)
         itemInfoViewTwo.set(itemInfoType: .following, with: user.following)
         button.configureItemInfoButton(title: "Get Followers", backgroundColor: .systemOrange)
+    }
+    
+    override func buttonTapped() {
+        delegate.didTapGetFollowers(for: user)
     }
 }

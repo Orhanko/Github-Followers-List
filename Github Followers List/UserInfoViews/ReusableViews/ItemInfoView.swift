@@ -14,12 +14,24 @@ class ItemInfoView: UIView {
     let itemInfoViewOne = ItemInfoCell()
     let itemInfoViewTwo = ItemInfoCell()
     let stackView = UIStackView()
+    weak var delegate: UserInfoViewControllerDelegate!
+    var user: User!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
         layoutUI()
         configureStackView()
+        configureButtonAction()
+    }
+    
+    init(user: User){
+        super.init(frame: .zero)
+        self.user = user
+        configure()
+        layoutUI()
+        configureStackView()
+        configureButtonAction()
     }
     
     
@@ -36,10 +48,14 @@ class ItemInfoView: UIView {
         stackView.axis = .horizontal
         stackView.distribution = .equalSpacing
         stackView.addArrangedSubview(itemInfoViewOne)
-//        itemInfoViewOne.backgroundColor = .systemMint
-//        itemInfoViewTwo.backgroundColor = .systemRed
         stackView.addArrangedSubview(itemInfoViewTwo)
     }
+    
+    func configureButtonAction(){
+        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+    }
+    
+    @objc func buttonTapped(){}
     
     func layoutUI(){
         let padding: CGFloat = 20

@@ -9,17 +9,13 @@ import UIKit
 
 class RepoItemInfoView: ItemInfoView {
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configureItems(with user: User) {
+    func configureItems() {
         itemInfoViewOne.set(itemInfoType: .repos, with: user.publicRepos)
         itemInfoViewTwo.set(itemInfoType: .gists, with: user.publicGists)
         button.configureItemInfoButton(title: "Github Profile", backgroundColor: .systemPurple)
+    }
+    
+    override func buttonTapped() {
+        delegate.didTapGithubProfile(for: user)
     }
 }

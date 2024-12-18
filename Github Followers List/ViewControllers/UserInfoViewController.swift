@@ -6,14 +6,18 @@
 //
 
 import UIKit
+import SafariServices
+
+protocol UserInfoViewControllerDelegate: AnyObject{
+    func didTapGithubProfile(for user: User)
+    func didTapGetFollowers(for user: User)
+}
 
 class UserInfoViewController: UIViewController {
     var username: String!
     let headerView = UserInfoHeaderView()
-    let itemInfoOne = RepoItemInfoView()
-    let itemInfoTwo = FollowerItemInfoView()
-    let proba = FollowerItemInfoView()
     let dateLabel = UILabel()
+    weak var delegate: FollowersListViewControllerDelegate!
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,10 +30,8 @@ class UserInfoViewController: UIViewController {
             switch result {
             case .success(let user):
                 DispatchQueue.main.async {
-                    self?.layoutUI()
+                    self?.layoutUI(with: user)
                     self?.headerView.configureHeaderView(for: user)
-                    self?.itemInfoOne.configureItems(with: user)
-                    self?.itemInfoTwo.configureItems(with: user)
                     self?.dateLabel.text = "Github Profile created in \(self?.formatISODateString(user.createdAt) ?? "")"
                 }
             case .failure(let error):
@@ -43,7 +45,13 @@ class UserInfoViewController: UIViewController {
     }
     
     
-    func layoutUI() {
+    func layoutUI(with user: User) {
+        let itemInfoOne = RepoItemInfoView(user: user)
+        let itemInfoTwo = FollowerItemInfoView(user: user)
+        itemInfoOne.configureItems()
+        itemInfoTwo.configureItems()
+        itemInfoOne.delegate = self
+        itemInfoTwo.delegate = self
         headerView.translatesAutoresizingMaskIntoConstraints = false
         itemInfoOne.translatesAutoresizingMaskIntoConstraints = false
         itemInfoTwo.translatesAutoresizingMaskIntoConstraints = false
@@ -88,4 +96,24 @@ class UserInfoViewController: UIViewController {
     
         return outputFormatter.string(from: date)
     }
+}
+
+extension UserInfoViewController: UserInfoViewControllerDelegate {
+    func didTapGithubProfile(for user: User) {
+        guard let url = URL(string: user.htmlUrl) else {
+            print("Nesto ne valja")
+            return
+        }
+        
+        let safariVC = SFSafariViewController(url: url)
+        safariVC.preferredControlTintColor = .systemOrange
+        present(safariVC, animated: true)
+    }
+
+    func didTapGetFollowers(for user: User) {
+        print("Get followers isto radi")
+        delegate.didSelectFollowers(for: user.login)
+        dismissVC()
+    }
+    
 }
