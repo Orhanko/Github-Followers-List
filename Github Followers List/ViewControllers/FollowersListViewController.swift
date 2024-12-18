@@ -39,6 +39,7 @@ class FollowersListViewController: UIViewController {
         getFollowers(username: username, page: page)
         configureVC()
         configureDataSource()
+        configureNavigationBarButtons()
     }
     
     func configureVC() {
@@ -152,6 +153,27 @@ class FollowersListViewController: UIViewController {
         
     }
     
+    @objc func showUserInfoViewController(){
+        let destVC = UserInfoViewController()
+        destVC.username = self.title
+        destVC.delegate = self
+        let navController = UINavigationController(rootViewController: destVC)
+        present(navController, animated: true)
+    }
+    
+    func configureNavigationBarButtons() {
+        
+        let firstIcon = UIBarButtonItem(image: UIImage(systemName: "person.circle"), style: .plain, target: self, action: #selector(showUserInfoViewController)
+        )
+        let secondIcon = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(secondIconTapped)
+        )
+        navigationItem.rightBarButtonItems = [secondIcon, firstIcon]
+    }
+        
+    @objc func secondIconTapped() {
+        print("Star icon tapped")
+    }
+    
     func configureSearchController() {
         let searchController = UISearchController()
         searchController.searchResultsUpdater = self
@@ -202,6 +224,12 @@ extension FollowersListViewController: UISearchResultsUpdating, UISearchBarDeleg
 }
 
 extension FollowersListViewController: FollowersListViewControllerDelegate{
+    
+    func scrollCollectionViewToTop() {
+        let topRect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        collectionView.scrollRectToVisible(topRect, animated: true)
+    }
+    
     func didSelectFollowers(for username: String) {
         self.username = username
         title = username
@@ -209,7 +237,8 @@ extension FollowersListViewController: FollowersListViewControllerDelegate{
         filteredFollowers.removeAll()
         page = 1
         hasMoreFollowers = true
-        collectionView.setContentOffset(.zero, animated: true)
+        collectionView.reloadData()
+        scrollCollectionViewToTop() // Pomjeri sadržaj na vrh
         getFollowers(username: username, page: page)
     }
     
