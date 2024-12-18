@@ -9,6 +9,7 @@ import UIKit
 
 protocol FollowersListViewControllerDelegate: AnyObject{
     func didSelectFollowers(for username: String)
+    func didSelectFollowing(for username: String)
 }
 
 class FollowersListViewController: UIViewController {
@@ -18,12 +19,18 @@ class FollowersListViewController: UIViewController {
     }
     
     var followers: [Followers] = []
+    var following: [Followers] = []
     var filteredFollowers: [Followers] = []
     var username: String = ""
     var page = 1
     var collectionView: UICollectionView!
+    var getFollowersFinished = false
+    var getFollowingFinished = false
     var hasMoreFollowers = true
+    var hasMoreFollowing = true
+    var followingPage = 1
     var isSearching = false
+    var isShowingFollowers = true // Praćenje trenutnog segmenta
     var loaderView: UIView!
     var dataSource: UICollectionViewDiffableDataSource<Section, Followers>!
     
@@ -35,16 +42,68 @@ class FollowersListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureSearchController()
+        configureSegmentedControl()
         configureCollectionView()
         getFollowers(username: username, page: page)
         configureVC()
         configureDataSource()
-        configureNavigationBarButtons()
+        
     }
     
     func configureVC() {
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    func configureSegmentedControl() {
+        let segmentedControl = UISegmentedControl(items: ["Followers", "Following"])
+        segmentedControl.selectedSegmentIndex = 0
+        segmentedControl.addTarget(self, action: #selector(segmentChanged(_:)), for: .valueChanged)
+        segmentedControl.selectedSegmentTintColor = .systemOrange
+        segmentedControl.backgroundColor = .secondarySystemBackground
+        
+        navigationItem.titleView = segmentedControl
+    }
+    
+    @objc func segmentChanged(_ sender: UISegmentedControl) {
+        isShowingFollowers = sender.selectedSegmentIndex == 0
+        removeEmptyFollowerListView() // Ukloni eventualnu poruku
+
+        if isShowingFollowers {
+            if followers.isEmpty {
+                if !getFollowersFinished { // Proveri da li je fetch već pokušan
+                    getFollowersFinished = true
+                    getFollowers(username: username, page: 1)
+                } else {
+                    print("Ispisni test radi provjere da li uslov ulazi u ovaj blok")
+                    DispatchQueue.main.async {
+                        self.showEmptyFollowerListView()
+                    }
+                }
+            } else {
+                DispatchQueue.main.async{
+                    self.navigationItem.searchController?.searchBar.isHidden = false
+                }
+                updateData(on: followers) // Prikaži followers niz
+            }
+        } else {
+            if following.isEmpty {
+                if !getFollowingFinished { // Proveri da li je fetch već pokušan
+                    getFollowingFinished = true
+                    getFollowing(username: username, page: 1)
+                } else {
+                    DispatchQueue.main.async {
+                        self.navigationItem.searchController?.searchBar.isHidden = true
+                        self.showEmptyFollowerListView()
+                    }
+                }
+            } else {
+                DispatchQueue.main.async{
+                    self.navigationItem.searchController?.searchBar.isHidden = false
+                }
+                updateData(on: following) // Prikaži following niz
+            }
+        }
     }
     
     func configureCollectionView() {
@@ -75,7 +134,9 @@ class FollowersListViewController: UIViewController {
             self?.dismissLoadingView()
             switch result{
             case .success(let followers):
-                print(followers)
+                DispatchQueue.main.async {
+                    self?.configureNavigationBarButtons()
+                }
                 if followers.count < 15 {self?.hasMoreFollowers = false}
                 self?.followers.append(contentsOf: followers)
                 if self?.followers.isEmpty == true {
@@ -85,15 +146,47 @@ class FollowersListViewController: UIViewController {
                 self?.updateData(on: self!.followers)
                 DispatchQueue.main.async {
                     self?.navigationItem.searchController?.searchBar.isHidden = false // Prikaz UISearchController
+                    
                 }
-                
-                
+            
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self?.navigationItem.titleView?.isHidden = true
+                    self?.handleUserNotFoundError(error)
+                }
+            }
+            
+        }
+    }
+    
+    func getFollowing(username: String, page: Int) {
+        showLoadingView()
+        NetworkManager.shared.getFollowing(for: username, page: page) { [weak self] result in
+            self?.dismissLoadingView()
+            switch result {
+            case .success(let following):
+                DispatchQueue.main.async {
+                    self?.configureNavigationBarButtons()
+                }
+                if following.isEmpty {
+                    DispatchQueue.main.async {
+                        self?.showEmptyFollowerListView()
+                    }
+                } else {
+                    if following.count < 15 { self?.hasMoreFollowing = false }
+                    self?.following.append(contentsOf: following)
+                    if self?.isShowingFollowers == false {
+                        self?.updateData(on: self!.following)
+                    }
+                    DispatchQueue.main.async {
+                        self?.navigationItem.searchController?.searchBar.isHidden = false // Prikaz UISearchController
+                    }
+                }
             case .failure(let error):
                 DispatchQueue.main.async {
                     self?.handleUserNotFoundError(error)
                 }
             }
-            
         }
     }
     
@@ -136,10 +229,23 @@ class FollowersListViewController: UIViewController {
         }
     }
     
+    func removeEmptyFollowerListView() {
+        DispatchQueue.main.async {
+            for subview in self.view.subviews {
+                if subview is CustomInfoView {
+                    subview.removeFromSuperview()
+                }
+            }
+        }
+        
+    }
+    
     func showEmptyFollowerListView(){
         let emptyView = CustomInfoView(imageName: "person.2.slash.fill", message: "Entered user does not have followers yet. ", emoji: "👀")
         emptyView.frame = view.bounds
         view.addSubview(emptyView)
+        navigationItem.searchController?.searchBar.isHidden = true
+        
     }
     
     func handleUserNotFoundError(_ error: CustomErrorForGetFollowers){
@@ -169,7 +275,7 @@ class FollowersListViewController: UIViewController {
         )
         navigationItem.rightBarButtonItems = [secondIcon, firstIcon]
     }
-        
+    
     @objc func secondIconTapped() {
         print("Star icon tapped")
     }
@@ -190,15 +296,27 @@ extension FollowersListViewController: UICollectionViewDelegate{
         let offsety = scrollView.contentOffset.y
         let height = scrollView.frame.height // height ekrana u tom trenutku
         let contentHeight = scrollView.contentSize.height // citav scrollView sa sadrzajem
-        if offsety > contentHeight - height{
-            guard hasMoreFollowers else { return }
-            page += 1
-            getFollowers(username: username, page: page)
+        
+        if offsety > contentHeight - height {
+            if isShowingFollowers {
+                guard hasMoreFollowers else { return }
+                page += 1
+                getFollowers(username: username, page: page)
+            } else {
+                guard hasMoreFollowing else { return }
+                followingPage += 1
+                getFollowing(username: username, page: followingPage)
+            }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let activeArray = isSearching ? filteredFollowers : followers
+        let activeArray: [Followers]
+        if isSearching {
+                activeArray = filteredFollowers
+            } else {
+                activeArray = isShowingFollowers ? followers : following
+            }
         let follower = activeArray[indexPath.item]
         let destVC = UserInfoViewController()
         destVC.username = follower.login
@@ -213,17 +331,48 @@ extension FollowersListViewController: UISearchResultsUpdating, UISearchBarDeleg
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter = searchController.searchBar.text, !filter.isEmpty else{ return }
         isSearching = true
-        filteredFollowers = followers.filter{ $0.login.lowercased().contains(filter.lowercased()) }
-        updateData(on: filteredFollowers)
+        if isShowingFollowers {
+            filteredFollowers = followers.filter { $0.login.lowercased().contains(filter.lowercased()) }
+            updateData(on: filteredFollowers)
+        } else {
+            filteredFollowers = following.filter { $0.login.lowercased().contains(filter.lowercased()) }
+            updateData(on: filteredFollowers)
+        }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         isSearching = false
-        updateData(on: followers)
+        if isShowingFollowers {
+            updateData(on: followers)
+        } else {
+            updateData(on: following)
+        }
     }
 }
 
 extension FollowersListViewController: FollowersListViewControllerDelegate{
+    func didSelectFollowing(for username: String) {
+        self.username = username
+        title = username
+        followers.removeAll()
+        following.removeAll()
+        filteredFollowers.removeAll()
+        page = 1
+        followingPage = 1
+        hasMoreFollowers = true
+        hasMoreFollowing = true
+        getFollowingFinished = false
+        getFollowersFinished = false
+        if let segmentedControl = navigationItem.titleView as? UISegmentedControl {
+                segmentedControl.selectedSegmentIndex = 1
+            isShowingFollowers = false
+            }
+        collectionView.reloadData()
+        scrollCollectionViewToTop() // Pomjeri sadržaj na vrh
+        removeEmptyFollowerListView()
+        getFollowing(username: username, page: followingPage)
+    }
+    
     
     func scrollCollectionViewToTop() {
         let topRect = CGRect(x: 0, y: 0, width: 1, height: 1)
@@ -234,11 +383,21 @@ extension FollowersListViewController: FollowersListViewControllerDelegate{
         self.username = username
         title = username
         followers.removeAll()
+        following.removeAll()
         filteredFollowers.removeAll()
         page = 1
+        followingPage = 1
         hasMoreFollowers = true
+        hasMoreFollowing = true
+        getFollowingFinished = false
+        getFollowersFinished = false
+                if let segmentedControl = navigationItem.titleView as? UISegmentedControl {
+                segmentedControl.selectedSegmentIndex = 0
+            isShowingFollowers = true
+            }
         collectionView.reloadData()
         scrollCollectionViewToTop() // Pomjeri sadržaj na vrh
+        removeEmptyFollowerListView()
         getFollowers(username: username, page: page)
     }
     

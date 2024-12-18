@@ -11,6 +11,7 @@ import SafariServices
 protocol UserInfoViewControllerDelegate: AnyObject{
     func didTapGithubProfile(for user: User)
     func didTapGetFollowers(for user: User)
+    func didTapGetFollowing(for user: User)
 }
 
 class UserInfoViewController: UIViewController {
@@ -47,7 +48,7 @@ class UserInfoViewController: UIViewController {
     
     func layoutUI(with user: User) {
         let itemInfoOne = RepoItemInfoView(user: user)
-        let itemInfoTwo = FollowerItemInfoView(user: user)
+        let itemInfoTwo = FollowersInfoView(user: user)
         itemInfoOne.configureItems()
         itemInfoTwo.configureItems()
         itemInfoOne.delegate = self
@@ -99,6 +100,12 @@ class UserInfoViewController: UIViewController {
 }
 
 extension UserInfoViewController: UserInfoViewControllerDelegate {
+    func didTapGetFollowing(for user: User) {
+        print("Get Following isto radi")
+        delegate.didSelectFollowing(for: user.login)
+        dismissVC()
+    }
+    
     func didTapGithubProfile(for user: User) {
         guard let url = URL(string: user.htmlUrl) else {
             print("Nesto ne valja")

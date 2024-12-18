@@ -59,6 +59,52 @@ class NetworkManager {
         task.resume()
     }
     
+    func getFollowing(for username: String, page: Int, completion: @escaping (Result<[Followers], CustomErrorForGetFollowers>) -> Void ){
+        let endpoint = "\(baseURL)\(username)/following?page=\(page)&per_page=15"
+        
+        guard let url = URL(string: endpoint) else {
+            completion(.failure(.invalidURL))
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            
+            if let error = error {
+                print("Network error: \(error.localizedDescription)")
+                completion(.failure(.errorData))
+                return
+            }
+            
+            if let response = response as? HTTPURLResponse {
+                switch response.statusCode {
+                    case 200:
+                        break // Sve je u redu
+                    case 404:
+                        completion(.failure(.userNotFound)) // Detektovan `404`
+                        return
+                    default:
+                        completion(.failure(.invalidResponse))
+                        return
+                    }
+            }
+            
+            guard let data else {
+                completion(.failure(.dataMissing))
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let following = try decoder.decode([Followers].self, from: data)
+                completion(.success(following))
+            } catch {
+                completion(.failure(.dataMissing))
+            }
+        }
+        task.resume()
+    }
+    
     func getUserInfo(for username: String, completion: @escaping (Result<User, CustomErrorForGetFollowers>) -> Void) {
         let endpoint = baseURL + username
         
