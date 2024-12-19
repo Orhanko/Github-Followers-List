@@ -23,7 +23,7 @@ class CustomTextField: UITextField {
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = 10
         layer.borderWidth = 1
-        layer.borderColor = UIColor.secondarySystemFill.cgColor
+        layer.borderColor = UIColor.tertiarySystemFill.cgColor
         placeholder = "Enter Github Username..."
         textColor = .label
         tintColor = .systemOrange

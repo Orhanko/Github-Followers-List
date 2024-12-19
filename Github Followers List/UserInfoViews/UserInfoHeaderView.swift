@@ -34,11 +34,10 @@ class UserInfoHeaderView: UIView {
     }
     
     func configureData() {
-        /*TODO: IZMIJENITI:*/ imageView.downloadImage(from: user!.avatarUrl)
-        //username.text = user?.login //?? "Orhanko" //TODO: OVO OBAVEZNO IZBRISATI
-        firstNameLastName.text =  user?.name ??  "Full name ❌" //TODO: OVO OBAVEZNO PROMIJENITI NA: "Full name not available"
+        imageView.downloadImage(from: user!.avatarUrl)
+        firstNameLastName.text =  user?.name ??  "Full name not available"
         locationImageView.image = UIImage(systemName: "mappin.and.ellipse")
-        locationLabel.text = user?.location ?? "Location ❌"
+        locationLabel.text = user?.location ?? "Location not available"
         locationImageView.tintColor = locationLabel.text == user?.location ? .systemBlue : .secondaryLabel
         bio.text = user?.bio ?? "Biography not available"
         locationLabel.lineBreakMode = .byWordWrapping

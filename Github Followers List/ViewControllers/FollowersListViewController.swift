@@ -272,7 +272,7 @@ class FollowersListViewController: UIViewController {
         let secondIcon = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(secondIconTapped)
         )
         navigationItem.rightBarButtonItems = [secondIcon, firstIcon]
-    }
+    } 
     
     @objc func secondIconTapped() {
         print("Star icon tapped")
