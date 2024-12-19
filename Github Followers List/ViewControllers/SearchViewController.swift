@@ -74,13 +74,6 @@ class SearchViewController: UIViewController {
         navigationController?.pushViewController(followersVC, animated: true)
     }
     
-    func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let dismissAction = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
-        alert.view.tintColor = .systemOrange
-        alert.addAction(dismissAction)
-        present(alert, animated: true, completion: nil)
-    }
 }
 
 extension SearchViewController: UITextFieldDelegate{
