@@ -75,9 +75,8 @@ class FollowersListViewController: UIViewController {
                     getFollowersFinished = true
                     getFollowers(username: username, page: 1)
                 } else {
-                    print("Ispisni test radi provjere da li uslov ulazi u ovaj blok")
                     DispatchQueue.main.async {
-                        self.showEmptyFollowerListView(with: .followers)
+                        self.showEmptyFollowerListView(for: .followers)
                     }
                 }
             } else {
@@ -93,8 +92,7 @@ class FollowersListViewController: UIViewController {
                     getFollowing(username: username, page: 1)
                 } else {
                     DispatchQueue.main.async {
-                        self.navigationItem.searchController?.searchBar.isHidden = true
-                        self.showEmptyFollowerListView(with: .following)
+                        self.showEmptyFollowerListView(for: .following)
                     }
                 }
             } else {
@@ -140,7 +138,7 @@ class FollowersListViewController: UIViewController {
                 if followers.count < 15 {self?.hasMoreFollowers = false}
                 self?.followers.append(contentsOf: followers)
                 if self?.followers.isEmpty == true {
-                    DispatchQueue.main.async { self?.showEmptyFollowerListView(with: .followers) }
+                    DispatchQueue.main.async { self?.showEmptyFollowerListView(for: .followers) }
                     return
                 }
                 self?.updateData(on: self!.followers)
@@ -170,7 +168,7 @@ class FollowersListViewController: UIViewController {
                 }
                 if following.isEmpty {
                     DispatchQueue.main.async {
-                        self?.showEmptyFollowerListView(with: .following)
+                        self?.showEmptyFollowerListView(for: .following)
                     }
                 } else {
                     if following.count < 15 { self?.hasMoreFollowing = false }
@@ -240,7 +238,7 @@ class FollowersListViewController: UIViewController {
         
     }
     
-    func showEmptyFollowerListView(with message: customEmptyInfoViewType){
+    func showEmptyFollowerListView(for message: customEmptyInfoViewType){
         let emptyView = CustomInfoView(imageName: "person.2.slash.fill", message: message, emoji: "👀")
         emptyView.frame = view.bounds
         view.addSubview(emptyView)
@@ -284,7 +282,7 @@ class FollowersListViewController: UIViewController {
         let searchController = UISearchController()
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
-        searchController.searchBar.placeholder = "Search for specific follower..."
+        searchController.searchBar.placeholder = "Search for specific user..."
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationItem.searchController?.searchBar.isHidden = true

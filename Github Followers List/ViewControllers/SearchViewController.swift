@@ -28,11 +28,11 @@ class SearchViewController: UIViewController {
     func configureLogoImageView(){
         view.addSubview(logoImageView)
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
-        logoImageView.image = UIImage(systemName: "person.and.background.dotted")
+        logoImageView.image = UIImage(named: "github-mark")?.withRenderingMode(.alwaysTemplate)
         let screenWidth = UIScreen.main.bounds.width
         let imageSize = screenWidth * 0.5
         NSLayoutConstraint.activate([
-            logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 80),
+            logoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 60),
             logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             logoImageView.heightAnchor.constraint(equalToConstant: imageSize),
             logoImageView.widthAnchor.constraint(equalToConstant: imageSize)
@@ -46,7 +46,8 @@ class SearchViewController: UIViewController {
         view.addSubview(textField)
         textField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            textField.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 48),
+//            textField.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 70),
+            textField.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
             textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
             textField.heightAnchor.constraint(equalToConstant: 48)
