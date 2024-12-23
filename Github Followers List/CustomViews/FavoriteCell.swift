@@ -32,8 +32,8 @@ class FavoriteCell: UITableViewCell {
         addSubview(usernameLabel)
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
         usernameLabel.textAlignment = .left
-        usernameLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        usernameLabel.textColor = .label // ili .black za tamne boje
+        usernameLabel.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        usernameLabel.textColor = .label
         usernameLabel.numberOfLines = 1
         accessoryType = .disclosureIndicator
         let padding: CGFloat = 12
@@ -41,11 +41,11 @@ class FavoriteCell: UITableViewCell {
         NSLayoutConstraint.activate([
             avatarImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
             avatarImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 60),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 60),
+            avatarImageView.heightAnchor.constraint(equalToConstant: 80),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 80),
             
             usernameLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            usernameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: padding*2),
+            usernameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: padding*1.5),
             usernameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding)
         ])
     }

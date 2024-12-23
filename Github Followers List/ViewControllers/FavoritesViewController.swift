@@ -24,7 +24,7 @@ class FavoritesViewController: UIViewController {
     func configuretableView(){
         view.addSubview(tableView)
         tableView.frame = view.bounds
-        tableView.rowHeight = 80
+        tableView.rowHeight = 100
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(FavoriteCell.self, forCellReuseIdentifier: FavoriteCell.reuseIdentifier)
