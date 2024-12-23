@@ -267,15 +267,9 @@ class FollowersListViewController: UIViewController {
     
     func configureNavigationBarButtons() {
         
-        let firstIcon = UIBarButtonItem(image: UIImage(systemName: "person.circle"), style: .plain, target: self, action: #selector(showUserInfoViewController)
+        let personCircleButton = UIBarButtonItem(image: UIImage(systemName: "person.circle"), style: .plain, target: self, action: #selector(showUserInfoViewController)
         )
-        let secondIcon = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(secondIconTapped)
-        )
-        navigationItem.rightBarButtonItems = [secondIcon, firstIcon]
-    } 
-    
-    @objc func secondIconTapped() {
-        print("Star icon tapped")
+        navigationItem.rightBarButtonItem = personCircleButton
     }
     
     func configureSearchController() {

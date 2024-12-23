@@ -14,4 +14,5 @@ enum CustomErrorForGetFollowers: String, Error{
     case dataMissing = "No data"
     case userNotFound = "The requested user was not found." // Dodato za 404
     case unableToFavorite = "Error found trying to favorite this user. Try again"
+    case alreadyInFavorites = "User already in favorites"
 }

@@ -16,6 +16,7 @@ protocol UserInfoViewControllerDelegate: AnyObject{
 
 class UserInfoViewController: UIViewController {
     var username: String!
+    var follower: Followers?
     let headerView = UserInfoHeaderView()
     let dateLabel = UILabel()
     weak var delegate: FollowersListViewControllerDelegate!
@@ -24,12 +25,14 @@ class UserInfoViewController: UIViewController {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = .systemBackground
-        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
-        navigationItem.rightBarButtonItem = doneButton
+        configureNavigationBar()
         title = username
         NetworkManager.shared.getUserInfo(for: username) { [weak self] result in
             switch result {
             case .success(let user):
+                self?.follower = Followers(login: user.login, avatarUrl: user.avatarUrl)
+                print("Follower login: \(self?.follower?.login ?? "Karina 1")")
+                print("Follower avatar URL: \(self?.follower?.avatarUrl ?? "Karina 2")")
                 DispatchQueue.main.async {
                     self?.layoutUI(with: user)
                     self?.headerView.configureHeaderView(for: user)
@@ -43,6 +46,19 @@ class UserInfoViewController: UIViewController {
     
     @objc func dismissVC() {
         dismiss(animated: true)
+    }
+    
+    @objc func starButtonTapped(){
+        guard let follower else {
+            showAlert(title: "Error", message: "pizda li ti materna")
+            return }
+        PersistenceManager.updateWith(favorite: follower, actionType: .add) { [weak self] error in
+            guard let error = error else{
+                self?.showAlert(title: "Success!", message: "User successfully added to favorites!")
+                return
+            }
+            self?.showAlert(title: "Error", message: error.rawValue)
+        }
     }
     
     
@@ -82,6 +98,16 @@ class UserInfoViewController: UIViewController {
         ])
         
     }
+    
+    func configureNavigationBar() {
+        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
+        navigationItem.rightBarButtonItem = doneButton
+        let starButton = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(starButtonTapped)
+        )
+        navigationItem.leftBarButtonItem = starButton
+    }
+    
+    
     
     func formatISODateString(_ dateString: String) -> String? {
         let inputFormatter = ISO8601DateFormatter()
