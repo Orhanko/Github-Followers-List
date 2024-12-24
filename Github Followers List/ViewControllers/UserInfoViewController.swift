@@ -19,13 +19,15 @@ class UserInfoViewController: UIViewController {
     var follower: Followers?
     let headerView = UserInfoHeaderView()
     let dateLabel = UILabel()
+    var starButton = UIBarButtonItem()
     weak var delegate: FollowersListViewControllerDelegate!
         
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureNavigationBar()
         navigationController?.navigationBar.prefersLargeTitles = true
         view.backgroundColor = .systemBackground
-        configureNavigationBar()
+        updateFavoriteButton()
         title = username
         NetworkManager.shared.getUserInfo(for: username) { [weak self] result in
             switch result {
@@ -37,6 +39,7 @@ class UserInfoViewController: UIViewController {
                     self?.layoutUI(with: user)
                     self?.headerView.configureHeaderView(for: user)
                     self?.dateLabel.text = "Github Profile created in \(self?.formatISODateString(user.createdAt) ?? "")"
+                    self?.updateFavoriteButton()
                 }
             case .failure(let error):
                 return print(error)
@@ -54,10 +57,33 @@ class UserInfoViewController: UIViewController {
             return }
         PersistenceManager.updateWith(favorite: follower, actionType: .add) { [weak self] error in
             guard let error = error else{
+                self?.updateFavoriteButton()
                 self?.showAlert(title: "Success!", message: "User successfully added to favorites!")
                 return
             }
             self?.showAlert(title: "Error", message: error.rawValue)
+        }
+    }
+    
+    func updateFavoriteButton() {
+        guard let follower = follower else { return }
+        
+        PersistenceManager.retrieveFavorites { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let favorites):
+                let isFavorite = favorites.contains(where: { $0.login == follower.login })
+                
+                DispatchQueue.main.async {
+                    let buttonImage = isFavorite ? UIImage(systemName: "star.fill") : UIImage(systemName: "star")
+                    self.starButton.image = buttonImage
+                }
+                
+            case .failure:
+                DispatchQueue.main.async {
+                    self.starButton.image = UIImage(systemName: "star")
+                }
+            }
         }
     }
     
@@ -102,8 +128,7 @@ class UserInfoViewController: UIViewController {
     func configureNavigationBar() {
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
         navigationItem.rightBarButtonItem = doneButton
-        let starButton = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(starButtonTapped)
-        )
+        starButton = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(starButtonTapped))
         navigationItem.leftBarButtonItem = starButton
     }
     
