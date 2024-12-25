@@ -18,11 +18,35 @@ class SearchViewController: UIViewController {
         configureLogoImageView()
         configureTextField()
         configureSearchButton()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    @objc func keyboardWillShow(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+            return
+        }
+        let keyboardHeight = keyboardFrame.height
+        view.frame.origin.y = -keyboardHeight / 6
+    }
+
+    @objc func keyboardWillHide(notification: Notification) {
+        view.frame.origin.y = 0
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        textField.text = ""
     }
     
     func configureLogoImageView(){
@@ -46,8 +70,7 @@ class SearchViewController: UIViewController {
         view.addSubview(textField)
         textField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-//            textField.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 70),
-            textField.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            textField.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 70),
             textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
             textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
             textField.heightAnchor.constraint(equalToConstant: 48)
@@ -58,7 +81,7 @@ class SearchViewController: UIViewController {
         view.addSubview(searchButton)
         searchButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            searchButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -128),
+            searchButton.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 80),
             searchButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 72),
             searchButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -72),
             searchButton.heightAnchor.constraint(equalToConstant: 48)
@@ -68,9 +91,8 @@ class SearchViewController: UIViewController {
     
     @objc func pushToSearchResults(){
         guard textFieldIsNotEmpty else { showAlert(title: "Warning!", message: "Text Field is empty!") ; return }
-        let followersVC = FollowersListViewController()
-        followersVC.title = textField.text
-        followersVC.username = textField.text!
+        textField.resignFirstResponder()
+        let followersVC = FollowersListViewController(username: textField.text!)
         navigationController?.pushViewController(followersVC, animated: true)
     }
     

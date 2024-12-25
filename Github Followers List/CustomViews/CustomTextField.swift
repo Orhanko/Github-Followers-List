@@ -34,6 +34,7 @@ class CustomTextField: UITextField {
         backgroundColor = .quaternarySystemFill
         autocorrectionType = .no
         returnKeyType = .default
+        clearButtonMode = .whileEditing
     }
     
     func dismissKeyboard() {
