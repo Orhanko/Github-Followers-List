@@ -19,40 +19,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 
         guard let mainApp = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: mainApp)
-        window.rootViewController = createTabBarController()
+        window.rootViewController = TabBarViewController()
         self.window = window
         window.makeKeyAndVisible()
         navBarAppearance()
-    }
-    
-    func configureSearchVC() -> UINavigationController {
-        let searchVC = SearchViewController()
-        searchVC.title = "Search"
-        searchVC.view.backgroundColor = .systemBackground
-        searchVC.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 0)
-        let navigationController = UINavigationController(rootViewController: searchVC)
-        return navigationController
-    }
-    
-    func configureFavoritesVC() -> UINavigationController {
-        let favoritesVC = FavoritesViewController()
-        favoritesVC.title = "Favorites"
-        favoritesVC.view.backgroundColor = .systemBackground
-        favoritesVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
-        let navigationController = UINavigationController(rootViewController: favoritesVC)
-        navigationController.navigationBar.prefersLargeTitles = true
-        return navigationController
-    }
-    
-    func createTabBarController() -> UITabBarController {
-        let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [configureSearchVC(), configureFavoritesVC()]
-        UITabBar.appearance().tintColor = .systemOrange
-        let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithDefaultBackground() // Moderni zamagljeni izgled
-        UITabBar.appearance().standardAppearance = tabBarAppearance
-        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance // Za scroll izvan granica
-        return tabBarController
     }
     
     func navBarAppearance() {
