@@ -57,7 +57,12 @@ class FollowersListViewController: UIViewController {
         getFollowers(username: username, page: page)
         configureVC()
         configureDataSource()
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleFavoriteUser(_:)), name: .didFavoriteUser, object: nil)
+    }
+    
+    @objc private func handleFavoriteUser(_ notification: Notification) {
+        guard let follower = notification.object as? Followers else { return }
+        print("User \(follower.login) was favorited")
     }
     
     func configureVC() {

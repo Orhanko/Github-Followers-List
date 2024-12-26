@@ -6,9 +6,13 @@
 //
 
 import UIKit
+extension Notification.Name {
+    static let didFavoriteUser = Notification.Name("didFavoriteUser")
+}
 
-class FollowerCell: UICollectionViewCell {
+class FollowerCell: UICollectionViewCell, UIContextMenuInteractionDelegate {
     static let reuseIdentifier = "FollowerCell"
+    private var currentFollower: Followers? // Svojstvo za čuvanje korisnika
     
     
     let avatarImageView = FollowerProfileImage(frame: .zero)
@@ -16,8 +20,8 @@ class FollowerCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         configure()
+        addContextMenuInteraction()
     }
     
     required init?(coder: NSCoder) {
@@ -25,6 +29,7 @@ class FollowerCell: UICollectionViewCell {
     }
     
     func set(follower: Followers) {
+        currentFollower = follower
         usernameLabel.text = follower.login
         avatarImageView.downloadImage(from: follower.avatarUrl)
     }
@@ -49,4 +54,22 @@ class FollowerCell: UICollectionViewCell {
             usernameLabel.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
+    private func addContextMenuInteraction() {
+            let interaction = UIContextMenuInteraction(delegate: self)
+            addInteraction(interaction)
+        }
+        
+        // MARK: - UIContextMenuInteractionDelegate
+        
+        func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+            guard let follower = currentFollower else { return nil }
+            
+            
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+                let favoriteAction = UIAction(title: "Favorite \(self.currentFollower?.login ?? "this user")", image: UIImage(systemName: "star")) { _ in
+                    NotificationCenter.default.post(name: .didFavoriteUser, object: follower)
+                }
+                return UIMenu(title: "", children: [favoriteAction])
+            }
+        }
 }
