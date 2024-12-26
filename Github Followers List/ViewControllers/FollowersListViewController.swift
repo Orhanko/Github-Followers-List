@@ -62,7 +62,13 @@ class FollowersListViewController: UIViewController {
     
     @objc private func handleFavoriteUser(_ notification: Notification) {
         guard let follower = notification.object as? Followers else { return }
-        print("User \(follower.login) was favorited")
+        PersistenceManager.updateWith(favorite: follower, actionType: .add) { [weak self] error in
+            guard let error = error else{
+                self?.showAlert(title: "Success!", message: "User successfully added to favorites!")
+                return
+            }
+            self?.showAlert(title: "Error", message: error.rawValue)
+        }
     }
     
     func configureVC() {
