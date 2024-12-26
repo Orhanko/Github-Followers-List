@@ -10,7 +10,7 @@ extension Notification.Name {
     static let didFavoriteUser = Notification.Name("didFavoriteUser")
 }
 
-class FollowerCell: UICollectionViewCell, UIContextMenuInteractionDelegate {
+class FollowerCell: UICollectionViewCell {
     static let reuseIdentifier = "FollowerCell"
     private var currentFollower: Followers? // Svojstvo za čuvanje korisnika
     
@@ -54,22 +54,54 @@ class FollowerCell: UICollectionViewCell, UIContextMenuInteractionDelegate {
             usernameLabel.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
-    private func addContextMenuInteraction() {
-            let interaction = UIContextMenuInteraction(delegate: self)
-            addInteraction(interaction)
-        }
+    
+    func favoriteText (for follower: Followers) -> String? {
+        var isFavorite = false
         
-        // MARK: - UIContextMenuInteractionDelegate
-        
-        func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-            guard let follower = currentFollower else { return nil }
-            
-            
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                let favoriteAction = UIAction(title: "Favorite \(self.currentFollower?.login ?? "this user")", image: UIImage(systemName: "star")) { _ in
-                    NotificationCenter.default.post(name: .didFavoriteUser, object: follower)
-                }
-                return UIMenu(title: "", children: [favoriteAction])
+        PersistenceManager.retrieveFavorites { result in
+            switch result {
+            case .success(let favorites):
+                isFavorite = favorites.contains(where: { $0.login == follower.login })
+            case .failure:
+                isFavorite = false
             }
         }
+        
+        return isFavorite ? "Already added to favorites!" : "Add to favorites"
+    }
+    
+    func favoriteIcon(for follower: Followers) -> UIImage {
+        var isFavorite = false
+        
+        PersistenceManager.retrieveFavorites { result in
+            switch result {
+            case .success(let favorites):
+                isFavorite = favorites.contains(where: { $0.login == follower.login })
+            case .failure:
+                isFavorite = false
+            }
+        }
+        
+        return isFavorite ? UIImage(systemName: "star.fill")! : UIImage(systemName: "star")!
+    }
+}
+
+extension FollowerCell: UIContextMenuInteractionDelegate {
+    private func addContextMenuInteraction() {
+        let interaction = UIContextMenuInteraction(delegate: self)
+        addInteraction(interaction)
+    }
+        
+        
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        guard let follower = currentFollower else { return nil }
+        
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self]  _ in
+            let favoriteAction = UIAction(title: self?.favoriteText(for: follower) ?? follower.login, image: self?.favoriteIcon(for: follower)) { _ in
+                NotificationCenter.default.post(name: .didFavoriteUser, object: follower)
+            }
+            return UIMenu(title: "", children: [favoriteAction])
+        }
+    }
 }

@@ -71,7 +71,7 @@ extension FavoritesViewController: UITableViewDelegate, UITableViewDataSource {
             guard let self else { return}
             
             guard let error = result else {return}
-            self.showAlert(title: "Error", message: "Unable to delete")
+            self.showAlert(title: "Error", message: error.rawValue)
         }
     }
     
